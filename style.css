@@ -1,0 +1,128 @@
+body {
+  background-color: white;
+  margin: 0 auto;
+}
+
+h1 {
+	font-family: helvetica, arial, sans-serif;
+	font-size: 22;
+	font-style: bold;
+	color: #34495e;
+}
+
+h4 {
+	font-family: arial;
+	font-size: 11;
+	font-style: bold;
+	color: #00A6AA;
+}
+
+p {
+	font-family: arial;
+	font-size: 22;
+	font-style: none;
+	color: #000000;
+}
+
+#container {
+	text-align: center;
+	width: 100%;
+}
+
+#header {
+	text-align: center;
+	width: 1366px;
+	min-height: 100px;
+	height: auto;
+	padding-top: 20px;
+	margin: 0 auto;
+}
+
+#headerBand{
+	background-color: #FFFFFF;
+	min-height: 40px;
+	height: auto;
+}
+
+circle {
+  fill: #3498DB;
+  stroke: black;
+  stroke-width: 2px;
+  opacity: .8;
+}
+
+circle:hover {
+  stroke: #22A7F0;
+}
+
+.Joy {
+  fill: #88DB54;
+}
+
+.Meh {
+	fill: #FE9A2E;
+}
+
+.Despair {
+	fill: #FF0000;
+}
+
+.Selected {
+	fill: #A4A4A4;
+}
+
+.All {
+	fill: #3498db;
+}
+
+.state{
+  fill: none;
+  stroke: #a9a9a9;
+  stroke-width: 1;
+}
+
+.state:hover{
+  fill-opacity: 0.5;
+}
+
+#tooltip {
+  position: absolute;
+  text-align: center;
+  padding: 20px;
+  margin: 10px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 1px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+#tooltip h4 {
+  margin: 0;
+  font-size: 14px;
+}
+
+#tooltip {
+  background: rgba(0,0,0,0.9);
+  border: 1px solid grey;
+  border-radius: 5px;
+  font-size: 12px;
+  width: auto;
+  padding: 4px;
+  color: white;
+  opacity: 0;
+}
+
+#tooltip table {
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 5px;
+}
+
+#tooltip tr td:nth-child(1) {
+  width: 50px;
+}
+
+#tooltip tr td:nth-child(2){
+  text-align: center;
+}

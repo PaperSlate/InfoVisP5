@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta charset="utf-8">
+		<title>CS4460 - P5</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="style.css">
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+	</head>
+
+	<body>
+		<div id="container">
+			<div id="header"><h1>Analyzing Candy Across The Country</h1></div>
+			<div id="headerBand"></br></div>
+
+			<div id="charts">
+				<div id="tooltip" style="padding: 10px"></div>
+				<div style="display: inline-block; float: left; margin-left: 30px">
+					<svg width="700" height="500" id="statesvg"></svg>
+				</div>
+
+				<div id="bubbleChart" style="display: inline-block; float: left">
+					<svg id="primarySVG" width="350" height="400" style="border: 1px solid #777;"></svg>
+					<svg id="secondarySVG" width="300" height="400" style="border: 1px solid #777;"></svg>
+				</div>
+			</div>
+		</div>
+		<br/>
+		<br/>
+
+		<div id="filters" style="padding-top: 50px">
+			<div id="top" style="display: inline-block">
+				<div style="float: left; width: 100% "><strong>Current Selected Candy:</strong> <span id="selectedCandy"></span></div>
+				<br/>
+				<div style="float: left; width: 100%"><strong>Selected State (One):</strong> <span id="stateOne"></span></div>
+				<br/>
+				<div style="float: left; width: 100%"><strong>Selected State (Two):</strong> <span id="stateTwo"></span></div>
+				<br/>
+				<div style="display: inline-block" id="pair">
+					<strong>Number of States:</strong>
+					<div></div>
+				</div>
+			</div>
+		</div>
+		<script src="bubbles.js"></script>
+
+<script src="states.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+	var sampleData = {};
+	var cleanDict = {};
+
+	var stateDict = {
+										'alabama': 'AL', 'alaska': 'AK', 'americansamoa': 'AS', 'arizona': 'AZ', 'arkansas': 'AR',
+			    					'california': 'CA', 'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE', 'districtofcolumbia': 'DC',
+			    					'federatedstatesofmicronesia': 'FM', 'florida': 'FL', 'georgia': 'GA', 'guam': 'GU', 'hawaii': 'HI',
+			    					'idaho': 'ID', 'illinois': 'IL', 'indiana': 'IN', 'iowa': 'IA', 'kansas': 'KS', 'kentucky': 'KY',
+										'louisiana': 'LA', 'maine': 'ME', 'marshallislands': 'MH', 'maryland': 'MD', 'massachusetts': 'MA',
+			    					'michigan': 'MI', 'minnesota': 'MN', 'mississippi': 'MS', 'missouri': 'MO', 'montana': 'MT', 'nebraska': 'NE',
+			    					'nevada': 'NV', 'newhampshire': 'NH', 'newjersey': 'NJ', 'newmexico': 'NM', 'newyork': 'NY', 'northcarolina': 'NC',
+										'northdakota': 'ND', 'northernmarianaislands': 'MP', 'ohio': 'OH', 'oklahoma': 'OK', 'oregon': 'OR', 'palau': 'PW',
+			    					'pennsylvania': 'PA', 'puertorico': 'PR', 'rhodeisland': 'RI', 'southcarolina': 'SC', 'southdakota': 'SD',
+			    					'tennessee': 'TN', 'texas': 'TX', 'utah': 'UT', 'vermont': 'VT', 'virginislands': 'VI', 'virginia': 'VA',
+			    					'washington': 'WA', 'washingtondc': 'DC', 'westvirginia': 'WV', 'wisconsin': 'WI', 'wyoming': 'WY'
+			  					};
+
+	var fullState = [
+										'Alabama', 'Alaska', 'American Samoa', 'Arizona', 'Arkansas', 'California',
+										'Colorado', 'Connecticut', 'Delaware', 'District of Columbia', 'Federated States of Micronesia',
+										'Florida', 'Georgia', 'Guam', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
+										'Louisiana', 'Maine', 'Marshall Islands', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
+										'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico',
+										'New York', 'North Carolina', 'North Dakota', 'Northern Mariana Islands', 'Ohio', 'Oklahoma', 'Oregon',
+										'Palau', 'Pennsylvania', 'Puerto Rico', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee',
+										'Texas', 'Utah', 'Vermont', 'Virgin Island', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+									];
+
+	var stateAbbrevs = [
+											 "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
+											 "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+											 "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+											 "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+											 "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
+											 "DC"
+										 ];
+
+	var candies = [];
+	var candyBubbles = []; // list of dictionaries
+	var candyBubblesTwo = []
+
+	var candyStats = {};
+	var allCandies = {};
+	var candySums = {};
+
+	d3.select("#filters")
+		.select("#top")
+		.append('p')
+		.append('button')
+		.text('Reset Display');
+
+	d3.select("#filters")
+		.select("#top")
+		.select("#pair")
+		.select("div")
+		.append('p')
+		.style("float", "left")
+		.append('select')
+		.attr('id', 'numStates')
+		.selectAll('option')
+		.data(['1', '2'])
+		.enter()
+		.append('option')
+		.text(function(d) { return d; })
+		.attr('value', function(d) { return d; });
+
+
+	function tooltipHtml(n, d){
+		return "<h4>" + n + "</h4><table>" +
+					 "<tr><td>Responses</td><td>[" + (d.responses) + "]</td></tr>" +
+					 "<tr><td>Male</td><td>[" + (d.male) + "]</td></tr>" +
+					 "<tr><td>Female</td><td>[" + (d.female) + "]</td></tr>" +
+					 "<tr><td>Unspecified</td><td>[" + (d.unspecified) + "]</td></tr>" +
+					 "</table>";
+	}
+
+	d3.select(self.frameElement).style("height", "600px");
+
+	function quantify(feeling) {
+		switch(feeling) {
+			case 'JOY': return 1;
+			case 'MEH': return 0;
+			case 'DESPAIR': return -1;
+			default: return null;
+		}
+	}
+
+	function clean(state) {
+
+		for (var i = 0; i < fullState.length; i++) { // lower case all state names
+			fullState[i] = fullState[i].toLowerCase();
+		}
+
+		state = state.toLowerCase();
+		state = state.replace('"', '');
+		state = state.replace(' ', '');
+		state = state.replace('"', '');
+		state = state.replace(' ', '');
+		state = state.replace('"', '');
+		state = state.replace(' ', '');
+
+		if (state == "washington,dc") {
+			return "DC";
+		}
+		if (state.includes(",")) {
+
+			temp = state.split(",");
+			for(var j = 0; j < temp.length; j++) {
+
+				if(temp[j] in stateDict) {
+					state = temp[j];
+				} else if(stateAbbrevs.includes(temp[j])) {
+					state = temp[j]
+				} else if (temp[j].includes("brooklyn")) {
+					state = "NY";
+				}
+			}
+		}
+
+		if (state.length == 2) {
+			return state.toUpperCase();
+		}
+
+		if (state == "washingtonstate" || state == "washingto" || state.includes("washington")) {
+			return 'WA'
+		}
+
+		if (state in stateDict) {
+
+			return stateDict[state];
+		} else if(state.includes("brooklyn") || state.includes("dutchesscountyny") || state.includes("newyorkcounty,new york city, new york state") || state.includes("nyc") ||
+					state.includes("suffolkcountyny")) {
+			return 'NY';
+		} else if (state.includes("cailifornia") || state.includes("calif") || state.includes("califor")) {
+			return 'CA';
+		} else if (state.includes("philadelphia") || state.includes("extonpa")) {
+			return 'PA';
+		} else if (state.includes("donaanacounty,new mexico")) {
+			return 'NM';
+		} else if (state.includes("idahoada")) {
+			return 'ID';
+		} else if (state.includes("neworleansla")) {
+			return "LA";
+		} else if (state.includes("st.augustineflorida")) {
+			return "FL";
+		} else if (state.includes("nj")) {
+			return "NJ";
+		}
+	}
+
+	function cleanHeader(header) {
+		header = header.replace("Q1_", "");
+		header = header.replace("Q2_", "");
+		header = header.replace("Q3_", "");
+		header = header.replace("Q4_", "");
+		header = header.replace("Q5_", "");
+		header = header.replace("Q6_", "");
+		header = header.replace("Q7_", "");
+		header = header.replace("Q8_", "");
+		header = header.replace("Q9_", "");
+		header = header.replace(new RegExp("_", "g"), " ");
+		header = header.replace(" straight up", "");
+		header = header.replace(" s", "'s");
+		header = header.replace("M M", "M&M");
+		header = header.replace("M&Ms", "M&M's");
+		header = header.replace("Licorice yes black", "Black Licorice");
+		header = header.replace("Licorice not black", "Red Licorice");
+		header = header.replace(" bad flavor", "s (Bad Flavor)");
+		header = header.replace(" good flavor", " (Good Flavor)");
+		header = header.replace("Mr ", "Mr. ");
+		header = header.replace(" i e abominations of nature", "");
+		header = header.replace("Tolberone'something or other", "Toblerone");
+		header = header.replace("STATE PROVINCE COUNTY ETC", "State");
+
+		return header;
+	}
+
+	function determineRanking(aList, candies) {
+
+		var final = Object.assign({}, aList[0]);
+
+		var returnDict = {};
+
+		for (k in candies) {
+			final[candies[k]] = [0];
+		}
+
+		for (var i = 0; i < aList.length; i++) {
+			for (j in candies) {
+				final[candies[j]][0] = Number(final[candies[j]][0]) + Number(aList[i][candies[j]]);
+			}
+		}
+
+		for (t in candies) {
+			final[candies[t]][0] = final[candies[t]][0] / aList.length;
+			final[candies[t]].push(aList.length);
+		}
+
+		for (m in candies) {
+			returnDict[candies[m]] = final[candies[m]];
+		}
+
+		return returnDict;
+	}
+
+	d3.csv("candy.csv", function(csv) {
+		var feelings = ["JOY", "DESPAIR", "MEH"];
+
+		for (var j = 6; j < 53; j++) {
+			candies.push(cleanHeader(Object.keys(csv[0])[j]));
+		}
+
+		for (var i = 0; i < csv.length; i++) { // iterate over data rows
+
+			if (csv[i].Q4_COUNTRY == "United States") { // limit to united states
+
+				var cleanedRow = {};
+
+				for (question in csv[i]) { // iterate over columns
+
+					cleaned = cleanHeader(question);
+
+					if (feelings.includes(csv[i][question])) {
+						cleanedRow[cleaned] = quantify(csv[i][question]);
+					} else {
+						cleanedRow[cleaned] = csv[i][question];
+					}
+				}
+				csv[i] = cleanedRow;
+				csv[i]["State"] = clean(csv[i]["State"]);
+				if (cleanDict[csv[i]["State"]]) {
+					cleanDict[csv[i]["State"]].push(csv[i]);
+				} else {
+					cleanDict[csv[i]["State"]] = [csv[i]];
+				}
+			}
+		}
+
+		stateAbbrevs.forEach(
+			function(d) {
+				var ranking = []
+
+				if (cleanDict[d]) {
+
+					ranking = determineRanking(cleanDict[d], candies);
+				} else {
+					ranking.push(Math.floor(Math.random() * candies.length));
+					ranking.push(Math.floor(Math.random() * candies.length));
+					ranking.push(Math.floor(Math.random() * candies.length));
+				}
+
+				candyStats[d] = ranking;
+
+				var numMale = 0;
+				var numFemale = 0;
+				var numAbstain = 0;
+
+				for (var key in cleanDict[d]) {
+					var gender = cleanDict[d][key].GENDER;
+
+					if (gender == "Male") {
+						numMale += 1;
+					} else if (gender == "Female") {
+						numFemale += 1;
+					} else {
+						numAbstain += 1;
+					}
+				}
+
+				sampleData[d] = { responses : cleanDict[d].length,
+													male : numMale,
+													female : numFemale,
+													unspecified: numAbstain,
+													color : "#e6ccab"
+												};
+			}
+		);
+
+		for (var k = 0; k < candies.length; k++) {
+			var candyDict = { name: candies[k], candyState: "All" };
+
+			for (var state in stateAbbrevs) {
+				candyDict[stateAbbrevs[state]] = "MEH";
+			}
+
+			var candyDictTwo = Object.assign({}, candyDict);
+
+			candyBubbles.push(candyDict);
+			candyBubblesTwo.push(candyDictTwo);
+
+
+			allCandies[candies[k]] = {}; // empty dictionary for current candy
+
+			for (var state in cleanDict) { // iterate over all states
+				var currState = {};
+
+				if (state != "undefined") {
+					var sumJoy = 0;
+					var sumMeh = 0;
+					var sumDespair = 0;
+
+					for (var response in cleanDict[state]) {
+						var candyResponse = cleanDict[state][response][candies[k]];
+
+						if (candyResponse == 1) {
+							sumJoy += 1;
+						} else if (candyResponse == 0) {
+							sumMeh += 1;
+						} else if (candyResponse == -1) {
+							sumDespair += 1;
+						}
+					}
+
+					currState["Joy"] = sumJoy;
+					currState["Meh"] = sumMeh;
+					currState["Despair"] = sumDespair;
+
+					allCandies[candies[k]][state] = currState;
+
+				}
+			}
+		}
+
+		for (var candy in allCandies) {
+			var sumJoy = 0;
+			var sumMeh = 0;
+			var sumDespair = 0;
+
+			for (var state in allCandies[candy]) {
+				sumJoy += allCandies[candy][state]["Joy"];
+				sumMeh += allCandies[candy][state]["Meh"];
+				sumDespair += allCandies[candy][state]["Despair"];
+			}
+
+			candySums[candy] = { "Joy": sumJoy, "Meh": sumMeh, "Despair": sumDespair };
+		}
+
+		states.draw("#statesvg", sampleData, tooltipHtml);
+		changeBubbleState(candyBubbles, candyBubblesTwo, allCandies, candySums, candyStats);
+
+	});
+
+
+</script>
+
+</body>
+
+</html>
