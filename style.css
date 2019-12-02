@@ -68,11 +68,11 @@ circle:hover {
 }
 
 .Selected {
-	fill: #A4A4A4;
+	fill: #3498db;
 }
 
 .All {
-	fill: #3498db;
+	fill: #A4A4A4;
 }
 
 .state{
